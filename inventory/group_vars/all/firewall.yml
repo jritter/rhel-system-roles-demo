@@ -1,0 +1,4 @@
+---
+firewall_base:
+  - service: cockpit
+    state: enabled

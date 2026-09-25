@@ -1,0 +1,32 @@
+#cloud-config
+hostname: __HOSTNAME__
+fqdn: __HOSTNAME__.lab.local
+manage_etc_hosts: true
+
+users:
+  - default
+  - name: __VM_USER__
+    groups: [wheel]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    shell: /bin/bash
+    lock_passwd: false
+    plain_text_passwd: __VM_PASSWORD__
+    ssh_authorized_keys:
+      - __SSH_PUBKEY__
+
+ssh_pwauth: true
+disable_root: true
+
+timezone: __VM_TIMEZONE__
+
+growpart:
+  mode: auto
+  devices: ["/"]
+  ignore_growroot_disabled: false
+
+__RH_SUBSCRIPTION_BLOCK__
+
+runcmd:
+  - ['bash', '-c', 'touch /var/lib/cloud/instance/lab-ready']
+
+final_message: "rhel-system-roles-demo guest __HOSTNAME__ is ready"

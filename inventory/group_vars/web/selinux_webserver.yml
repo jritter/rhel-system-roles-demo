@@ -1,0 +1,15 @@
+---
+selinux_booleans:
+  - name: httpd_can_network_connect
+    state: true
+selinux_fcontexts:
+  - target: "/web(/.*)?"
+    setype: httpd_sys_content_t
+    ftype: "a"
+# selinux_restore_dirs:
+#   - /web
+selinux_ports:
+  - ports: 8000
+    proto: tcp
+    setype: http_port_t
+    state: present

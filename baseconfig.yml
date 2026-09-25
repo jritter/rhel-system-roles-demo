@@ -1,0 +1,44 @@
+---
+- name: Apply baseline configuration
+  hosts: all
+  become: true
+  tasks:
+    - name: Configure SELinux
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.selinux
+
+    - name: Apply Base Configuration
+      ansible.builtin.include_role:
+        name: baseconfig
+
+    - name: Configure SSHD
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.sshd
+
+    - name: Configure Crypto Policies
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.crypto_policies
+
+    - name: Configure Kdump
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.kdump
+
+    - name: Configure AIDE
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.aide
+
+    - name: Merge firewall rules
+      ansible.builtin.set_fact:
+        firewall: "{{ firewall_base | d([]) + firewall_group | d([]) }}"
+
+    - name: Configure Firewall
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.firewall
+
+    - name: Deploy Cockpit
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.cockpit
+
+    - name: Deploy Tlog
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.tlog

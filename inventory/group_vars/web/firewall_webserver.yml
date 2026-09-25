@@ -1,0 +1,4 @@
+---
+firewall_group:
+  - port: 8000/tcp
+    state: enabled

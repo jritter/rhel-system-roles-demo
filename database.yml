@@ -1,0 +1,8 @@
+---
+- name: Configure PostgreSQL Database
+  hosts: db
+  become: true
+  tasks:
+    - name: Configure Database
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.postgresql

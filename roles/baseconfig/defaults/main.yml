@@ -1,0 +1,9 @@
+---
+baseconfig_timezone: "Europe/Amsterdam"
+
+baseconfig_issue_banner: |
+  ********************************************************************
+  *  WARNING: This system is for authorized users only.              *
+  *  Unauthorized access is prohibited and may be subject to         *
+  *  criminal prosecution. All activity is monitored and logged.     *
+  ********************************************************************

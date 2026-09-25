@@ -1,0 +1,7 @@
+---
+aide_db_fetch_dir: files
+aide_install: true
+aide_generate_config: true
+aide_init: false
+aide_check: false
+aide_update: false
