@@ -3,51 +3,74 @@
   hosts: all
   become: true
   tasks:
+
+    # chronyc sources
+    # grep pool /etc/chrony.conf
     - name: Configure Timesync
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.timesync
 
+    # ls -l /etc/rsyslog.d/
     - name: Configure Log Forwarding
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.logging
 
+    # semanage fcontext -l | grep "^/web"
     - name: Configure SELinux
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.selinux
 
+    # grep -r Banner /etc/ssh
     - name: Configure SSHD
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.sshd
 
+    # update-crypto-policies --show
     - name: Configure Crypto Policies
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.crypto_policies
 
-    - name: Configure AIDE
-      ansible.builtin.include_role:
-        name: redhat.rhel_system_roles.aide
-
+    # We need this to merge the firewall rules defined for all hosts and the group specific ones.
     - name: Merge firewall rules
       ansible.builtin.set_fact:
         firewall: "{{ firewall_base | d([]) + firewall_group | d([]) }}"
 
+    # firewall-cmd --list-ports
+    # firewall-cmd --list-services
     - name: Configure Firewall
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.firewall
 
+    # rpm -q cockpit
+    # systemctl is-enabled cockpit.socket
     - name: Deploy Cockpit
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.cockpit
 
-
     # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/automating_system_administration_by_using_rhel_system_roles/configuring-a-system-for-session-recording-by-using-rhel-system-roles
     # journalctl _COMM=tlog-rec-sessio
     # tlog-play -r journal -M TLOG_REC=<recording_id>
-
     - name: Deploy tlog
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.tlog
 
+    # And finally we apply the bespoke configuration of the organization
     - name: Apply Base Organization specific Base Configuration
       ansible.builtin.include_role:
         name: baseconfig
+
+    - name: Check if AIDE is already initialized
+      ansible.builtin.stat:
+        path: /var/lib/aide/aide.db.gz
+      register: aide_db_stat
+
+    # rpm -q aide
+    # aide --check
+    # We do that at the end because all the previous roles
+    # may have changed the state of the system
+    - name: Configure AIDE
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.aide
+      vars:
+        aide_init: "{{ not (aide_db_stat.stat.exists | bool) }}"
+        aide_update: true
