@@ -3,13 +3,17 @@
   hosts: all
   become: true
   tasks:
+    - name: Configure Timesync
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.timesync
+
+    - name: Configure Log Forwarding
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.logging
+
     - name: Configure SELinux
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.selinux
-
-    - name: Apply Base Configuration
-      ansible.builtin.include_role:
-        name: baseconfig
 
     - name: Configure SSHD
       ansible.builtin.include_role:
@@ -18,10 +22,6 @@
     - name: Configure Crypto Policies
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.crypto_policies
-
-    - name: Configure Kdump
-      ansible.builtin.include_role:
-        name: redhat.rhel_system_roles.kdump
 
     - name: Configure AIDE
       ansible.builtin.include_role:
@@ -39,6 +39,15 @@
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.cockpit
 
-    - name: Deploy Tlog
+
+    # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/automating_system_administration_by_using_rhel_system_roles/configuring-a-system-for-session-recording-by-using-rhel-system-roles
+    # journalctl _COMM=tlog-rec-sessio
+    # tlog-play -r journal -M TLOG_REC=<recording_id>
+
+    - name: Deploy tlog
       ansible.builtin.include_role:
         name: redhat.rhel_system_roles.tlog
+
+    - name: Apply Base Organization specific Base Configuration
+      ansible.builtin.include_role:
+        name: baseconfig

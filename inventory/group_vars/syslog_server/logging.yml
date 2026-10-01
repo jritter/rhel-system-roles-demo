@@ -1,0 +1,23 @@
+---
+logging_inputs:
+  - name: remote_udp_input
+    type: remote
+    udp_ports: [514, 1514]
+  - name: remote_tcp_input
+    type: remote
+    tcp_ports: [514, 1514]
+logging_outputs:
+  - name: remote_files_output
+    type: remote_files
+logging_flows:
+  - name: flow_0
+    inputs: [remote_udp_input, remote_tcp_input]
+    outputs: [remote_files_output]
+
+
+# Open Port 415 to receive syslog messages from other servers
+firewall_group:
+  - port: 514/tcp
+    state: enabled
+  - port: 514/udp
+    state: enabled

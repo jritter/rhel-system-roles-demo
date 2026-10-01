@@ -1,4 +1,6 @@
 ---
+
+# In a corporate environment, we want to display a login banner to the users.
 - name: Set login banner
   ansible.builtin.copy:
     content: "{{ baseconfig_issue_banner }}"
@@ -9,3 +11,14 @@
   loop:
     - /etc/issue
     - /etc/issue.net
+
+# We need this becuse sssd refuses to load the session recording
+# configuration with the permissions that are set by the role
+# This is most likely a bug in the tlog role.
+- name: Fix tlog sssd file permissions
+  ansible.builtin.file:
+    path: /etc/sssd/conf.d/sssd-session-recording.conf
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Handler tlog_handler restart sssd

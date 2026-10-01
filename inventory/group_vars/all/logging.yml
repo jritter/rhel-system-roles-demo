@@ -1,0 +1,20 @@
+---
+
+syslog_server: node03
+
+logging_inputs:
+  - name: system_logs
+    type: basics
+
+logging_outputs:
+  - name: remote_rsyslog
+    type: forwards
+    target: "{{ syslog_server }}"
+    tcp_port: 514
+
+logging_flows:
+  - name: forward_all
+    inputs:
+      - system_logs
+    outputs:
+      - remote_rsyslog

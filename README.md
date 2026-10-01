@@ -23,6 +23,8 @@ ansible all -m ping
 ./lab/destroy-lab.sh
 ```
 
+> **Note:** The lab setup scripts have been tested on Fedora 44. They may work on other distributions with libvirt/KVM support, but are not guaranteed to.
+
 See [`lab/config.env.example`](lab/config.env.example) for configurable options (image path, VM sizing, timezone, credentials).
 
 ## Playbooks
@@ -61,3 +63,4 @@ ansible-playbook database.yml
 ### Reference
 
 - [Available RHEL System Roles](https://access.redhat.com/articles/3050101)
+- [Linux System Roles](https://linux-system-roles.github.io/)

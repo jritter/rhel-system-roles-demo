@@ -1,5 +1,5 @@
 ---
 timesync_ntp_servers:
-  - hostname: 0.pool.ntp.org
+  - hostname: pool.ntp.org
     iburst: true
-    pool: false
+    pool: true

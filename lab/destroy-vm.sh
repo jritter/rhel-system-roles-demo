@@ -27,6 +27,12 @@ if virsh --connect "${LIBVIRT_URI}" dominfo "${NAME}" >/dev/null 2>&1; then
       2>/dev/null || true
   fi
 
+  echo "==> Removing ${NAME} from known_hosts"
+  ssh-keygen -R "${NAME}" 2>/dev/null || true
+  if [[ -n "${IP}" ]]; then
+    ssh-keygen -R "${IP}" 2>/dev/null || true
+  fi
+
   echo "==> Destroying domain ${NAME}"
   virsh --connect "${LIBVIRT_URI}" destroy "${NAME}" >/dev/null 2>&1 || true
   virsh --connect "${LIBVIRT_URI}" undefine "${NAME}" --nvram --remove-all-storage >/dev/null 2>&1 \
